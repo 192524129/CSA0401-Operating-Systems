@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_BLOCKS 100
+
+struct Block
+{
+    int blockNumber;
+    char data[100];
+};
+
+int main()
+{
+    FILE *file;
+    struct Block block;
+
+    long indexBlock[MAX_BLOCKS];
+
+    int blockNumber;
+
+    for (int i = 0; i < MAX_BLOCKS; i++)
+        indexBlock[i] = -1;
+
+    file = fopen("indexed.dat", "wb");
+
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    printf("Enter blocks.\n");
+    printf("Enter -1 as block number to stop.\n");
+
+    while (1)
+    {
+        printf("\nBlock Number (0-99): ");
+        scanf("%d", &block.blockNumber);
+
+        if (block.blockNumber == -1)
+            break;
+
+        if (block.blockNumber < 0 ||
+            block.blockNumber >= MAX_BLOCKS)
+        {
+            printf("Invalid block number.\n");
+            continue;
+        }
+
+        printf("Enter data: ");
+        scanf(" %[^\n]", block.data);
+
+        indexBlock[block.blockNumber] = ftell(file);
+
+        fwrite(&block, sizeof(block), 1, file);
+    }
+
+    fclose(file);
+
+    file = fopen("indexed.dat", "rb");
+
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    while (1)
+    {
+        printf("\nEnter block number to read (-1 to exit): ");
+        scanf("%d", &blockNumber);
+
+        if (blockNumber == -1)
+            break;
+
+        if (blockNumber < 0 ||
+            blockNumber >= MAX_BLOCKS ||
+            indexBlock[blockNumber] == -1)
+        {
+            printf("Block not found.\n");
+        }
+        else
+        {
+            fseek(file,
+                  indexBlock[blockNumber],
+                  SEEK_SET);
+
+            fread(&block, sizeof(block), 1, file);
+
+            printf("Block Number: %d\n",
+                   block.blockNumber);
+
+            printf("Data: %s\n",
+                   block.data);
+        }
+    }
+
+    fclose(file);
+
+    return 0;
+}

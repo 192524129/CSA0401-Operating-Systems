@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Block
+{
+    int blockNumber;
+    char data[100];
+    struct Block *next;
+};
+
+int main()
+{
+    struct Block *firstBlock = NULL;
+    struct Block *lastBlock = NULL;
+    struct Block *newBlock;
+    struct Block *currentBlock;
+
+    int blockCount = 0;
+    int choice;
+    int blockNumber;
+
+    while (1)
+    {
+        printf("\n--- LINKED ALLOCATION ---\n");
+        printf("1. Add Block\n");
+        printf("2. Read Block\n");
+        printf("3. Display All Blocks\n");
+        printf("4. Exit\n");
+
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        if (choice == 1)
+        {
+            newBlock =
+                (struct Block *)malloc(sizeof(struct Block));
+
+            if (newBlock == NULL)
+            {
+                printf("Memory allocation failed.\n");
+                return 1;
+            }
+
+            blockCount++;
+
+            newBlock->blockNumber = blockCount;
+
+            printf("Enter data: ");
+            scanf(" %[^\n]", newBlock->data);
+
+            newBlock->next = NULL;
+
+            if (firstBlock == NULL)
+            {
+                firstBlock = newBlock;
+                lastBlock = newBlock;
+            }
+            else
+            {
+                lastBlock->next = newBlock;
+                lastBlock = newBlock;
+            }
+
+            printf("Block added successfully.\n");
+        }
+
+        else if (choice == 2)
+        {
+            printf("Enter block number: ");
+            scanf("%d", &blockNumber);
+
+            currentBlock = firstBlock;
+
+            while (currentBlock != NULL)
+            {
+                if (currentBlock->blockNumber ==
+                    blockNumber)
+                {
+                    printf("Block %d Data: %s\n",
+                           currentBlock->blockNumber,
+                           currentBlock->data);
+                    break;
+                }
+
+                currentBlock = currentBlock->next;
+            }
+
+            if (currentBlock == NULL)
+                printf("Block not found.\n");
+        }
+
+        else if (choice == 3)
+        {
+            currentBlock = firstBlock;
+
+            if (currentBlock == NULL)
+                printf("No blocks available.\n");
+
+            while (currentBlock != NULL)
+            {
+                printf("Block %d -> %s\n",
+                       currentBlock->blockNumber,
+                       currentBlock->data);
+
+                currentBlock = currentBlock->next;
+            }
+        }
+
+        else if (choice == 4)
+        {
+            break;
+        }
+
+        else
+        {
+            printf("Invalid choice.\n");
+        }
+    }
+
+    /* Free allocated memory */
+    currentBlock = firstBlock;
+
+    while (currentBlock != NULL)
+    {
+        struct Block *temp = currentBlock;
+
+        currentBlock = currentBlock->next;
+
+        free(temp);
+    }
+
+    return 0;
+}

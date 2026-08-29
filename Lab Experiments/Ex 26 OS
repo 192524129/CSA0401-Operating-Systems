@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    FILE *fp;
+    char filename[50];
+    char data[200];
+
+    int choice;
+
+    while (1)
+    {
+        printf("\n--- FILE MANAGEMENT ---\n");
+        printf("1. Create File\n");
+        printf("2. Write File\n");
+        printf("3. Read File\n");
+        printf("4. Delete File\n");
+        printf("5. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        if (choice == 1)
+        {
+            printf("Enter filename: ");
+            scanf("%s", filename);
+
+            fp = fopen(filename, "w");
+
+            if (fp == NULL)
+                perror("Error");
+            else
+            {
+                printf("File created successfully.\n");
+                fclose(fp);
+            }
+        }
+
+        else if (choice == 2)
+        {
+            printf("Enter filename: ");
+            scanf("%s", filename);
+
+            fp = fopen(filename, "a");
+
+            if (fp == NULL)
+            {
+                perror("Error");
+                continue;
+            }
+
+            printf("Enter data: ");
+            scanf(" %[^\n]", data);
+
+            fprintf(fp, "%s\n", data);
+
+            fclose(fp);
+
+            printf("Data written successfully.\n");
+        }
+
+        else if (choice == 3)
+        {
+            printf("Enter filename: ");
+            scanf("%s", filename);
+
+            fp = fopen(filename, "r");
+
+            if (fp == NULL)
+            {
+                perror("Error");
+                continue;
+            }
+
+            printf("\nFile contents:\n");
+
+            while (fgets(data, sizeof(data), fp))
+                printf("%s", data);
+
+            fclose(fp);
+        }
+
+        else if (choice == 4)
+        {
+            printf("Enter filename: ");
+            scanf("%s", filename);
+
+            if (remove(filename) == 0)
+                printf("File deleted successfully.\n");
+            else
+                perror("Delete error");
+        }
+
+        else if (choice == 5)
+        {
+            break;
+        }
+
+        else
+        {
+            printf("Invalid choice.\n");
+        }
+    }
+
+    return 0;
+}

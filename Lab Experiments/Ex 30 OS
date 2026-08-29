@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <pthread.h>
+
+void *threadFunction(void *arg)
+{
+    printf("Inside the thread.\n");
+
+    pthread_exit(NULL);
+}
+
+int main()
+{
+    pthread_t thread;
+
+    /* CREATE */
+    pthread_create(&thread, NULL, threadFunction, NULL);
+
+    printf("Thread created successfully.\n");
+
+    /* EQUAL */
+    if (pthread_equal(thread, pthread_self()))
+        printf("Threads are equal.\n");
+    else
+        printf("Threads are not equal.\n");
+
+    /* JOIN */
+    pthread_join(thread, NULL);
+
+    printf("Thread joined successfully.\n");
+
+    /* EXIT */
+    pthread_exit(NULL);
+
+    return 0;
+}

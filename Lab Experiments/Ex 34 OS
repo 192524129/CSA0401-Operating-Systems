@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Record
+{
+    int recordNumber;
+    char data[100];
+};
+
+int main()
+{
+    FILE *file;
+    struct Record record;
+    int choice;
+
+    file = fopen("sequential.dat", "wb");
+
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    printf("Enter records.\n");
+    printf("Enter 0 as record number to stop.\n");
+
+    while (1)
+    {
+        printf("\nRecord Number: ");
+        scanf("%d", &record.recordNumber);
+
+        if (record.recordNumber == 0)
+            break;
+
+        printf("Enter data: ");
+        scanf(" %[^\n]", record.data);
+
+        fwrite(&record, sizeof(record), 1, file);
+    }
+
+    fclose(file);
+
+    file = fopen("sequential.dat", "rb");
+
+    if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    while (1)
+    {
+        printf("\nEnter record number to read (0 to exit): ");
+        scanf("%d", &choice);
+
+        if (choice == 0)
+            break;
+
+        rewind(file);
+
+        int found = 0;
+
+        /* Read sequentially from the beginning */
+        while (fread(&record, sizeof(record), 1, file) == 1)
+        {
+            printf("Reading Record %d\n", record.recordNumber);
+
+            if (record.recordNumber == choice)
+            {
+                printf("Data: %s\n", record.data);
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found)
+            printf("Record not found.\n");
+    }
+
+    fclose(file);
+
+    return 0;
+}

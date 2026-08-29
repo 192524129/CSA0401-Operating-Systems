@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+int main()
+{
+    int fd;
+    char buffer[100];
+
+    fd = creat("sample.txt", 0644);
+
+    if (fd == -1)
+    {
+        perror("creat");
+        return 1;
+    }
+
+    printf("File created successfully.\n");
+
+    close(fd);
+
+    fd = open("sample.txt", O_WRONLY | O_APPEND);
+
+    if (fd == -1)
+    {
+        perror("open");
+        return 1;
+    }
+
+    write(fd, "Hello UNIX\n", 11);
+
+    close(fd);
+
+    fd = open("sample.txt", O_RDONLY);
+
+    if (fd == -1)
+    {
+        perror("open");
+        return 1;
+    }
+
+    int bytes = read(fd, buffer, sizeof(buffer) - 1);
+
+    if (bytes > 0)
+    {
+        buffer[bytes] = '\0';
+        printf("File content:\n%s", buffer);
+    }
+
+    close(fd);
+
+    if (remove("sample.txt") == 0)
+        printf("\nFile deleted successfully.\n");
+    else
+        perror("remove");
+
+    return 0;
+}
